@@ -1,15 +1,25 @@
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '@/components/layout/Navbar';
 import HeroSection from '@/components/home/HeroSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
 import { useAuth } from '@/context/AuthContext';
+import { useTurnkey } from '@/context/TurnkeyContext';
 
 export default function Home() {
   const router = useRouter();
-
   const { login } = useAuth();
+  const { wallet } = useTurnkey();
+
+  // Check if user has a wallet on component mount
+  useEffect(() => {
+    if (wallet.address) {
+      login();
+    }
+  }, [wallet.address, login]);
+
   const handleGetStarted = () => {
-    router.push('/connect'); // Remove login() and just route to connect page
+    router.push('/connect');
   };
 
   const steps = [

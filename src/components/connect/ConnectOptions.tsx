@@ -1,8 +1,24 @@
-interface ConnectOptionsProps {
-    onConnect: (type: 'new' | 'existing') => void;
-  }
+import { useTurnkey } from '../../context/TurnkeyContext';
+import { useAuth } from '../../context/AuthContext';
 
-  const ConnectOptions = ({ onConnect }: ConnectOptionsProps) => {
+interface ConnectOptionsProps {
+  onConnect: (type: 'new' | 'existing') => void;
+}
+
+const ConnectOptions = ({ onConnect }: ConnectOptionsProps) => {
+  const { connectExistingWallet } = useTurnkey();
+  const { login } = useAuth();
+
+  const handleExistingConnect = async () => {
+    try {
+      await connectExistingWallet();
+      login();
+      onConnect('existing');
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      alert('Failed to connect wallet. Please try again.');
+    }
+  };
     return (
       <div className="max-w-md mx-auto">
         {/* Progress Indicator */}
